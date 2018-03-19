@@ -37,7 +37,7 @@ function init(){
     camera.position.y = canvas.height/2;
 
 
-    // Set the dimensions of the canvas
+    // Set some styles of the canvas
     canvas.style.marginTop = canvas.height * 0.08 + 'px';
     canvas.style.marginBottom = canvas.height * 0.08 + 'px';
     canvas.style.marginRight = canvas.width * 0.08 + 'px';
@@ -101,6 +101,7 @@ function totalKineticEnergy() {
 }
 
 //returns a random pastel color
+// Laurel likes pastels
 function randomColor(){
   let red = Math.floor(Math.random()*64 + 192);
   let blue = Math.floor(Math.random()*64 + 192);

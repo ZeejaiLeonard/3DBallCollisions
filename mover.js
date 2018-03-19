@@ -8,11 +8,6 @@ function Mover(radius, loc, vel, acc, color){
   this.vel = vel;
   this.acc = acc;
 
-  //track how many frames since 2 balls collided
-  this.collisionTracker = [];
-  for(var i = 0; i < num_balls; i++){
-    this.collisionTracker.push(10);
-  }
   // create a threejs sphere with radius, widthSegments, heightSegments = 100
   var geometry = new THREE.SphereGeometry( this.radius, 100, 100);
 
