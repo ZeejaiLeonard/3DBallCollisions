@@ -157,15 +157,19 @@ function checkBallBounces () {
 
         // To solve for the final velocities of ball one and ball two,
         // we need to find the following things.
-        // 1. The component of ball one's initial velocity (vel_b1) in the direction
-        // of the center of mass (vel_b1_cm).
-        // 2. The component of ball two's initial velocity (vel_b2) in the direction
-        // of the center of mass (vel_b2_cm).
-        // 3. The component of the center of mass's velocity in the direction
+        // 1. The component of ball one's initial velocity (vel_b1) that is
+        // in the direction of the center of mass (vel_b1_cm).
+        // 2. The component of ball two's initial velocity (vel_b2) that is
+        // in the direction of the center of mass (vel_b2_cm).
+        // 3. The component of the center of mass's velocity that is in the direction
         // of b1 (vel_cm_b1), which is also the component of the center
-        // of mass's velocity in the direction of b2.
+        // of mass's velocity in the direction of b2 since they all lie on the
+        // same line. The sign is opposite for the two balls because if the
+        // center of mass is moving toward one of the balls it is moving
+        // away from the other ball.
         // 4. The component of ball one's initial velocity orthogonal to the direction
-        // of the center of mass (vel_b1_not_cm)
+        // of the center of mass (vel_b1_not_cm).  This velocity is not part of
+        // the collision but must be conserved and added back in the end.
         // 5. The component of ball two's initial velocity orthogonal to the direction
         // of the center of mass (vel_b2_not_cm)
         //
@@ -185,7 +189,7 @@ function checkBallBounces () {
 
 
         // Where is the center of mass?  It must lie on a line
-        // connecting the two colliding objects with a magnitude
+        // connecting the two colliding objects at a point
         // proportionate to the two masses.
         var vec_cm = vector2d.subtract(b1.loc, b2.loc);
         vec_cm.setMag(vec_cm.magnitude() * (b1.mass/(b1.mass+b2.mass)));
@@ -215,20 +219,19 @@ function checkBallBounces () {
         vel_b2_cm.setMag(b2.vel.magnitude() * Math.cos(vector2d.angleBetween(b2.vel,vel_b2_cm)));
         var vel_b2_not_cm = vector2d.subtract(b2.vel,vel_b2_cm);
 
-        //calculate velocities after collision using vf = 2*v_cm - vi
+        //calculate final velocities after collision using vf = 2*v_cm - vi
         //http://courses.ncssm.edu/apb11o/resources/guides/G09-4b.com.htm
 
         var v1_final = vector2d.scalarMult(vel_cm_b1, 2); // 2 times the velocity of cm
         v1_final.subtract(vel_b1_cm);   // subtract b1's velocity towards the CM
         v1_final.add(vel_b1_not_cm);    // add back b1's velocity not towards the CM
-        // console.log(`b1 final velocity ${v1_final}`);
 
         var v2_final = vector2d.scalarMult(vel_cm_b1, 2);
         v2_final.subtract(vel_b2_cm);   // subtract velocity towards the CM
         v2_final.add(vel_b2_not_cm);    // add back the velocity not towards the CM
 
 
-        b1.vel = v1_final;
+        b1.vel = v1_final;  // the final velocities after the collision
         b2.vel = v2_final;
 
         // note the total momentum after the collision
