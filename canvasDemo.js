@@ -1,4 +1,4 @@
-window.onload = init; // Wait for the page to load before we begin animation
+window.addEventListener('load', load); // Wait for the page to load before we begin animation
 var renderer;
 var scene;
 var camera;
@@ -6,10 +6,14 @@ var balls = [];
 var num_balls = 10;
 var canvas;
 
+function load() {
+    setTimeout(init,1000);
+
+}
+
 function init(){
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( 900, 600 );   // the canvas size
-    document.body.appendChild( renderer.domElement );
     canvas = renderer.domElement; //get the canvas
     scene = new THREE.Scene();
     scene.background = new THREE.Color("rgb(96, 96, 96)");
@@ -47,7 +51,7 @@ function init(){
     var loader = new THREE.TextureLoader();
     // load a resource
     loader.load(
-    	'moon_1024.jpg',
+    	'Asteroid1.png',
     	// onLoad callback
     	function ( texture ) {
             // create array of balls where no ball is created overlapping
@@ -81,6 +85,16 @@ function init(){
          }
 
     logEnergy();
+
+
+    // Hide the loading screen and show the wrapper div. 
+    // Dont add the canvas to the wrapper div
+    // until now or it will appear prematurely
+    let loaderDiv = document.getElementById('loader');
+    loaderDiv.style.display = 'none';
+    var wrapperDiv = document.getElementById('wrapper');
+    wrapperDiv.style.display = 'block';
+    wrapperDiv.appendChild( canvas );
     animate();
     });
 }
