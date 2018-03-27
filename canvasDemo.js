@@ -3,7 +3,7 @@ var renderer;
 var scene;
 var camera;
 var balls = [];
-var num_balls = 20;
+var num_balls = 10;
 var canvas;
 
 function init(){
@@ -15,12 +15,11 @@ function init(){
     scene.background = new THREE.Color("rgb(96, 96, 96)");
 
     // White directional light at full intensity shining from directly above.
-    var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+    var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.8 );
     // directionalLight.position.x = canvas.width/2;
-    // directionalLight.position.y = -canvas.height/2;
-    directionalLight.position.z = 100;
+    // directionalLight.position.y = canvas.height/2;
+    directionalLight.position.z = 10;
     scene.add( directionalLight );
-
 
     // A camera angle of view of 30 degrees and a z position of
     // 1130 approximates one scene coordinate unit to
@@ -44,37 +43,46 @@ function init(){
     canvas.style.marginLeft = canvas.width * 0.08 + 'px';
     canvas.style.border = 'solid black 2px';
 
-    // create array of balls where no ball is created overlapping
-    // any other ball.
-    for (var i = 0; i < num_balls; i++){
-       var ball;
-     while(true) {
-         var radius = Math.random()*20 + 15;
-         var color = randomColor();
-         //set location vector
-         var x = Math.random() * (canvas.width-2*radius) + radius;
-         var y = Math.random() * (canvas.height-2*radius) + radius;
-         var loc = new vector2d(x, y);
-         //set velocity vector
-         var r = (Math.random()* 4 + 0.5);
-         var theta = Math.random() * 2 * Math.PI;
-         var vel = new vector2d(undefined, undefined, r, theta);
-         var acc = new vector2d(0, 0);
-         ball = new Mover(radius, loc, vel, acc, color);
-         // check that this new ball does not collide with any other ball
-         for(var j = 0;  j < balls.length; j++){
-             if(vector2d.distance(balls[j].loc,ball.loc) <= (balls[j].radius + ball.radius))
-                 break;  // collision
-         }
-         if(j === balls.length)
-             break;  // no collision
+    // instantiate a texture loader
+    var loader = new THREE.TextureLoader();
+    // load a resource
+    loader.load(
+    	'moon_1024.jpg',
+    	// onLoad callback
+    	function ( texture ) {
+            // create array of balls where no ball is created overlapping
+        // any other ball.
+        for (var i = 0; i < num_balls; i++){
+           var ball;
+             while(true) {
+                 var radius = Math.random()*30 + 15;
+                 var color = randomColor();
+                 //set location vector
+                 var x = Math.random() * (canvas.width-2*radius) + radius;
+                 var y = Math.random() * (canvas.height-2*radius) + radius;
+                 var loc = new vector2d(x, y);
+                 //set velocity vector
+                 var r = (Math.random()* 4 + 0.5);
+                 var theta = Math.random() * 2 * Math.PI;
+                 var vel = new vector2d(undefined, undefined, r, theta);
+                 var acc = new vector2d(0, 0);
+                 ball = new Mover(radius, loc, vel, acc, color, texture);
+                 // check that this new ball does not collide with any other ball
+                 for(var j = 0;  j < balls.length; j++){
+                     if(vector2d.distance(balls[j].loc,ball.loc) <= (balls[j].radius + ball.radius))
+                         break;  // collision
+                 }
+                 if(j === balls.length)
+                     break;  // no collision
+                 }
+
+             balls[i] = ball;
+             scene.add(ball.mesh);
          }
 
-     balls[i] = ball;
-     scene.add(ball.mesh);
-    }
     logEnergy();
     animate();
+    });
 }
 
 function animate() {

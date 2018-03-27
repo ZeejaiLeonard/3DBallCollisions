@@ -1,5 +1,5 @@
 //creates ball objects when called w/ new
-function Mover(radius, loc, vel, acc, color){
+function Mover(radius, loc, vel, acc, color, texture){
   this.radius = radius;
   this.color = color;
   //let volume = area and density = 1, so mass = area
@@ -8,14 +8,19 @@ function Mover(radius, loc, vel, acc, color){
   this.vel = vel;
   this.acc = acc;
 
+  // this.x_rot = Math.random()*2*Math.PI;
+  // this.y_rot = Math.random()*2*Math.PI;
+  // this.z_rot = Math.random()*2*Math.PI;
+
   // create a threejs sphere with radius, widthSegments, heightSegments = 100
   var geometry = new THREE.SphereGeometry( this.radius, 100, 100);
 
-  var material = new THREE.MeshLambertMaterial( { color: this.color } );
+  var material = new THREE.MeshLambertMaterial( { color: this.color, map: texture } );
   // The mesh is what threejs needs in the scene
   this.mesh = new THREE.Mesh( geometry, material );
   this.mesh.position.x = this.loc.x;
   this.mesh.position.y = this.loc.y;
+  this.mesh.rotation.set(Math.random()*2*Math.PI,Math.random()*2*Math.PI,Math.random()*2*Math.PI);
 }
 
 Mover.prototype.momentum = function(){
@@ -34,6 +39,9 @@ Mover.prototype.update = function () {
   this.vel.add(this.acc);
   this.mesh.position.x = this.loc.x;
   this.mesh.position.y = this.loc.y;
+  this.mesh.rotation.x += 0.05;
+  this.mesh.rotation.y += 0.05;
+  this.mesh.rotation.z += 0.05;
 }
 
 //reverses direction when ball hits edge
