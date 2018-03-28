@@ -149,7 +149,7 @@ function init(){
     // Hide the loading screen and show the wrapper div.
     // Dont add the canvas to the wrapper div
     // until now or it will appear prematurely
-    let loaderDiv = document.getElementById('loader');
+    let loaderDiv = document.getElementById('loader-wrapper');
     loaderDiv.style.display = 'none';
     var wrapperDiv = document.getElementById('wrapper');
     wrapperDiv.styledisplay = 'block';
