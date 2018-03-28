@@ -15,12 +15,11 @@ function Mover(radius, loc, vel, acc, color, texture){
   // create a threejs sphere with radius, widthSegments, heightSegments = 100
   var geometry = new THREE.SphereGeometry( this.radius, 100, 100);
 
-  var material = new THREE.MeshLambertMaterial( { color: this.color, map: texture } );
+  var material = new THREE.MeshLambertMaterial( { map: texture } );
   // The mesh is what threejs needs in the scene
   this.mesh = new THREE.Mesh( geometry, material );
   this.mesh.position.x = this.loc.x;
   this.mesh.position.y = this.loc.y;
-  this.mesh.rotation.set(Math.random()*2*Math.PI,Math.random()*2*Math.PI,Math.random()*2*Math.PI);
 }
 
 Mover.prototype.momentum = function(){
@@ -33,15 +32,20 @@ Mover.prototype.kineticEnergy = function(){
 }
 
 //updates ball position
-Mover.prototype.update = function () {
-  this.checkEdges();
-  this.loc.add(this.vel);
-  this.vel.add(this.acc);
-  this.mesh.position.x = this.loc.x;
-  this.mesh.position.y = this.loc.y;
-  this.mesh.rotation.x += 0.05;
-  this.mesh.rotation.y += 0.05;
-  this.mesh.rotation.z += 0.05;
+Mover.prototype.update = function (index) {
+    this.checkEdges();
+    this.loc.add(this.vel);
+    this.vel.add(this.acc);
+    this.mesh.position.x = this.loc.x;
+    this.mesh.position.y = this.loc.y;
+    // rotate on different axes depending on the index
+    // based on there being 10 total
+    if(index >= 7)
+        this.mesh.rotation.x += 0.05;
+    else if(index >= 3)
+        this.mesh.rotation.y += 0.05;
+    else
+        this.mesh.rotation.z += 0.05;
 }
 
 //reverses direction when ball hits edge

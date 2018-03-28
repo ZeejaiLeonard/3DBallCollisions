@@ -5,10 +5,75 @@ var camera;
 var balls = [];
 var num_balls = 10;
 var canvas;
+var textures = {};
 
+// Use promises to load all the textures from image files
 function load() {
-    setTimeout(init,1000);
+    Promise.all([
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0001.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0002.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0003.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0004.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0005.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0006.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0007.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0008.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+            }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0009.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        }),
+        new Promise(function (resolve, reject) {
+            new THREE.TextureLoader().load("images/PlanetTestRender0010.png",
+                function(texture) { resolve(texture);}, undefined,
+                function(err) { reject()} );
+        })
+    ]).then(function(txtrs){
+        textures.planet1 = txtrs[0];
+        textures.planet2 = txtrs[1];
+        textures.planet3 = txtrs[2];
+        textures.planet4 = txtrs[3];
+        textures.planet5 = txtrs[4];
+        textures.planet6 = txtrs[5];
+        textures.planet7 = txtrs[6];
+        textures.planet8 = txtrs[7];
+        textures.planet9 = txtrs[8];
+        textures.planet10 = txtrs[9];
 
+        init();
+    });
 }
 
 function init(){
@@ -47,63 +112,57 @@ function init(){
     canvas.style.marginLeft = canvas.width * 0.08 + 'px';
     canvas.style.border = 'solid black 2px';
 
-    // instantiate a texture loader
-    var loader = new THREE.TextureLoader();
-    // load a resource
-    loader.load(
-    	'Asteroid1.png',
-    	// onLoad callback
-    	function ( texture ) {
-            // create array of balls where no ball is created overlapping
-        // any other ball.
-        for (var i = 0; i < num_balls; i++){
-           var ball;
-             while(true) {
-                 var radius = Math.random()*30 + 15;
-                 var color = randomColor();
-                 //set location vector
-                 var x = Math.random() * (canvas.width-2*radius) + radius;
-                 var y = Math.random() * (canvas.height-2*radius) + radius;
-                 var loc = new vector2d(x, y);
-                 //set velocity vector
-                 var r = (Math.random()* 4 + 0.5);
-                 var theta = Math.random() * 2 * Math.PI;
-                 var vel = new vector2d(undefined, undefined, r, theta);
-                 var acc = new vector2d(0, 0);
-                 ball = new Mover(radius, loc, vel, acc, color, texture);
-                 // check that this new ball does not collide with any other ball
-                 for(var j = 0;  j < balls.length; j++){
-                     if(vector2d.distance(balls[j].loc,ball.loc) <= (balls[j].radius + ball.radius))
-                         break;  // collision
-                 }
-                 if(j === balls.length)
-                     break;  // no collision
-                 }
 
-             balls[i] = ball;
-             scene.add(ball.mesh);
+        // create array of balls where no ball is created overlapping
+    // any other ball.
+    for (var i = 0; i < num_balls; i++){
+     var ball;
+     while(true) {
+         var radius = Math.random()*30 + 25;
+         var color = randomColor();
+         //set location vector
+         var x = Math.random() * (canvas.width-2*radius) + radius;
+         var y = Math.random() * (canvas.height-2*radius) + radius;
+         var loc = new vector2d(x, y);
+         //set velocity vector
+         var r = (Math.random()* 4 + 0.5);
+         var theta = Math.random() * 2 * Math.PI;
+         var vel = new vector2d(undefined, undefined, r, theta);
+         var acc = new vector2d(0, 0);
+         ball = new Mover(radius, loc, vel, acc, color, textures["planet"+(i+1)]);
+         // check that this new ball does not collide with any other ball
+         for(var j = 0;  j < balls.length; j++){
+             if(vector2d.distance(balls[j].loc,ball.loc) <= (balls[j].radius + ball.radius))
+                 break;  // collision
          }
+         if(j === balls.length)
+             break;  // no collision
+         }
+
+     balls[i] = ball;
+     scene.add(ball.mesh);
+     }
 
     logEnergy();
 
 
-    // Hide the loading screen and show the wrapper div. 
+    // Hide the loading screen and show the wrapper div.
     // Dont add the canvas to the wrapper div
     // until now or it will appear prematurely
     let loaderDiv = document.getElementById('loader');
     loaderDiv.style.display = 'none';
     var wrapperDiv = document.getElementById('wrapper');
-    wrapperDiv.style.display = 'block';
+    wrapperDiv.styledisplay = 'block';
     wrapperDiv.appendChild( canvas );
     animate();
-    });
+
 }
 
 function animate() {
     requestAnimationFrame( animate );
     checkBallBounces();
     for(let i = 0; i < balls.length; i++)
-        balls[i].update();
+        balls[i].update(i);
     renderer.render(scene, camera);
 };
 
