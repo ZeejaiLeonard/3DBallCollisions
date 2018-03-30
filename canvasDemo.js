@@ -5,8 +5,10 @@ var camera;
 var balls = [];
 var num_balls = 10;
 var canvas;
-var textures = {};
-var starField;
+var textures = {};  // all textures loaded from image files
+var starField;      // THREE.Points
+var frameCount = 0; // frames processed in the last second
+var fps;             // frames per second text node
 
 // Use promises to load all the textures from image files
 function load() {
@@ -84,8 +86,6 @@ function init(){
     scene = new THREE.Scene();
     scene.background = new THREE.Color("rgb(0, 0, 0)");
 
-
-
     //This will add a starfield to the background of a scene
     var starsGeometry = new THREE.Geometry();
     for ( var i = 0; i < 1000; i ++ ) {
@@ -126,10 +126,10 @@ function init(){
 
 
     // Set some styles of the canvas
-    canvas.style.marginTop = canvas.height * 0.08 + 'px';
-    canvas.style.marginBottom = canvas.height * 0.08 + 'px';
-    canvas.style.marginRight = canvas.width * 0.08 + 'px';
-    canvas.style.marginLeft = canvas.width * 0.08 + 'px';
+    canvas.style.marginTop = canvas.height * 0.05 + 'px';
+    canvas.style.marginBottom = canvas.height * 0.05 + 'px';
+    canvas.style.marginRight = canvas.width * 0.05 + 'px';
+    canvas.style.marginLeft = canvas.width * 0.05 + 'px';
     canvas.style.border = 'solid black 2px';
 
 
@@ -169,17 +169,27 @@ function init(){
     // Hide the loading screen and show the wrapper div.
     // Dont add the canvas to the wrapper div
     // until now or it will appear prematurely
+    fps = document.createTextNode('60 FPS');
+    document.getElementById('fps').appendChild(fps);
     let loaderDiv = document.getElementById('loader-wrapper');
     loaderDiv.style.display = 'none';   // make the loader screen go away
     var wrapperDiv = document.getElementById('wrapper');
-    wrapperDiv.styledisplay = 'block';  // make the canvas visible
+    wrapperDiv.style.display = 'block';  // make the canvas visible
     wrapperDiv.appendChild( canvas );
     animate();
+    setInterval(checkFPS, 1000);    // check and indicate the frames per second
+}
 
+// called once a second to read and display the frames per second
+function checkFPS(){
+    var frames = frameCount;
+    frameCount = 0;
+    fps.textContent = `${frames} FPS`;
 }
 
 function animate() {
     requestAnimationFrame( animate );
+    frameCount++;
     checkBallBounces();
     for(let i = 0; i < balls.length; i++)
         balls[i].update(i);
