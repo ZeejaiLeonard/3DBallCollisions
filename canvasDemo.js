@@ -6,6 +6,7 @@ var balls = [];
 var num_balls = 10;
 var canvas;
 var textures = {};
+var starField;
 
 // Use promises to load all the textures from image files
 function load() {
@@ -81,7 +82,26 @@ function init(){
     renderer.setSize( 900, 600 );   // the canvas size
     canvas = renderer.domElement; //get the canvas
     scene = new THREE.Scene();
-    scene.background = new THREE.Color("rgb(96, 96, 96)");
+    scene.background = new THREE.Color("rgb(0, 0, 0)");
+
+
+
+    //This will add a starfield to the background of a scene
+    var starsGeometry = new THREE.Geometry();
+    for ( var i = 0; i < 1000; i ++ ) {
+    	var star = new THREE.Vector3();
+    	star.x = THREE.Math.randFloatSpread( 1000 );
+    	star.y = THREE.Math.randFloatSpread( 1000 );
+    	star.z = THREE.Math.randFloatSpread( 1000 );
+    	starsGeometry.vertices.push( star );
+    }
+    var starsMaterial = new THREE.PointsMaterial( { color: 0xffffbb, size: 5} );
+    starField = new THREE.Points( starsGeometry, starsMaterial );
+    starField.rotation.x = Math.PI/4;
+    starField.position.x = canvas.width/2;
+    starField.position.y = canvas.height/2;
+    starField.position.z = 100;
+    scene.add( starField );
 
     // White directional light at full intensity shining from directly above.
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.8 );
@@ -125,11 +145,11 @@ function init(){
          var y = Math.random() * (canvas.height-2*radius) + radius;
          var loc = new vector2d(x, y);
          //set velocity vector
-         var r = (Math.random()* 4 + 0.5);
+         var r = (Math.random()* 4 + 2.5);
          var theta = Math.random() * 2 * Math.PI;
          var vel = new vector2d(undefined, undefined, r, theta);
          var acc = new vector2d(0, 0);
-         ball = new Mover(radius, loc, vel, acc, color, textures["planet"+(i+1)]);
+         ball = new Mover(radius, loc, vel, acc, color, textures["planet"+((i%10)+1)]);
          // check that this new ball does not collide with any other ball
          for(var j = 0;  j < balls.length; j++){
              if(vector2d.distance(balls[j].loc,ball.loc) <= (balls[j].radius + ball.radius))
@@ -150,9 +170,9 @@ function init(){
     // Dont add the canvas to the wrapper div
     // until now or it will appear prematurely
     let loaderDiv = document.getElementById('loader-wrapper');
-    loaderDiv.style.display = 'none';
+    loaderDiv.style.display = 'none';   // make the loader screen go away
     var wrapperDiv = document.getElementById('wrapper');
-    wrapperDiv.styledisplay = 'block';
+    wrapperDiv.styledisplay = 'block';  // make the canvas visible
     wrapperDiv.appendChild( canvas );
     animate();
 
@@ -163,6 +183,7 @@ function animate() {
     checkBallBounces();
     for(let i = 0; i < balls.length; i++)
         balls[i].update(i);
+    starField.rotation.z += 0.001;  // rotate the starfield a little
     renderer.render(scene, camera);
 };
 

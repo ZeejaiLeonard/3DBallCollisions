@@ -39,10 +39,10 @@ Mover.prototype.update = function (index) {
     this.mesh.position.x = this.loc.x;
     this.mesh.position.y = this.loc.y;
     // rotate on different axes depending on the index
-    // based on there being 10 total
-    if(index >= 7)
+    // based on 10 
+    if((index % 10)>= 7)
         this.mesh.rotation.x += 0.05;
-    else if(index >= 3)
+    else if((index % 10) >= 3)
         this.mesh.rotation.y += 0.05;
     else
         this.mesh.rotation.z += 0.05;
@@ -67,12 +67,3 @@ Mover.prototype.checkEdges = function () {
     this.vel.y *= -1;
   }
 }
-
-// //draws ball
-// Mover.prototype.draw = function () {
-//   this.update();
-//   ctx.beginPath();
-//   ctx.arc(this.loc.x, this.loc.y, this.radius, 0, Math.PI * 2);
-//   ctx.fillStyle = this.color;
-//   ctx.fill();
-// };
