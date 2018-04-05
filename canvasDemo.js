@@ -7,6 +7,7 @@ var num_balls = 10;
 var canvas;
 var textures = {};  // all textures loaded from image files
 var starField;      // THREE.Points
+var starSprites;
 var frameCount = 0; // frames processed in the last second
 var fps;             // frames per second text node
 
@@ -86,22 +87,25 @@ function init(){
     scene = new THREE.Scene();
     scene.background = new THREE.Color("rgb(0, 0, 0)");
 
-    //This will add a starfield to the background of a scene
-    var starsGeometry = new THREE.Geometry();
-    for ( var i = 0; i < 1000; i ++ ) {
-    	var star = new THREE.Vector3();
-    	star.x = THREE.Math.randFloatSpread( 1000 );
-    	star.y = THREE.Math.randFloatSpread( 1000 );
-    	star.z = THREE.Math.randFloatSpread( 1000 );
-    	starsGeometry.vertices.push( star );
-    }
-    var starsMaterial = new THREE.PointsMaterial( { color: 0xffffbb, size: 5} );
-    starField = new THREE.Points( starsGeometry, starsMaterial );
+    // add a starfield of Points
+    starField = createStarField();
     starField.rotation.x = Math.PI/4;
     starField.position.x = canvas.width/2;
     starField.position.y = canvas.height/2;
-    starField.position.z = 100;
+    starField.position.z = -1000;
+    // The star points dont look good when passing
+    // in front of the balls (planets) so move them back
+    // behind.
     scene.add( starField );
+
+    // add a starfield of Sprites
+    starSprites = createStarSprites();
+    starSprites.rotation.x = Math.PI/4;
+    starSprites.position.x = canvas.width/2;
+    starSprites.position.y = canvas.height/2;
+    // starSprites.position.z = -250;
+    scene.add(starSprites);
+
 
     // White directional light at full intensity shining from directly above.
     var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.8 );
@@ -114,7 +118,7 @@ function init(){
     // 1130 approximates one scene coordinate unit to
     // one pixel.
     camera = new THREE.PerspectiveCamera( 30,
-        canvas.width/canvas.height, 100, 2000 );
+        canvas.width/canvas.height, 100, 5000 );
 	camera.position.z = 1130;
     // Move the camera so that the origin of the coordinates
     // is in the bottom left of the camera's frustrum
@@ -177,14 +181,14 @@ function init(){
     wrapperDiv.style.display = 'block';  // make the canvas visible
     wrapperDiv.appendChild( canvas );
     animate();
-    setInterval(checkFPS, 1000);    // check and indicate the frames per second
+    setInterval(checkFPS, 250);    // check and indicate the frames per second
 }
 
-// called once a second to read and display the frames per second
+// called four times a second to read and display the frames per second
 function checkFPS(){
     var frames = frameCount;
     frameCount = 0;
-    fps.textContent = `${frames} FPS`;
+    fps.textContent = `${frames * 4} FPS`;
 }
 
 function animate() {
@@ -193,7 +197,8 @@ function animate() {
     checkBallBounces();
     for(let i = 0; i < balls.length; i++)
         balls[i].update(i);
-    starField.rotation.z += 0.001;  // rotate the starfield a little
+    starField.rotation.z += 0.0005;  // rotate the starfield a little
+    starSprites.rotation.z -= 0.0005;  // rotate the sprites a little
     renderer.render(scene, camera);
 };
 
