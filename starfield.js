@@ -14,15 +14,15 @@ function createStarField() {
     return(starField);
 }
 
-function createStarSprites(){
+function createStarSprites(num){
     var sprites = new THREE.Object3D();
     var texture = createStarTexture();
     texture.needsUpdate = true;
     var material = new THREE.SpriteMaterial( { map: texture, color: 0xffffff } );
-    for(let i = 0; i < 500; i++){
+    for(let i = 0; i < num; i++){
         var sprite = new THREE.Sprite(material);
-        sprite.position.x =  THREE.Math.randFloatSpread( 1500 );
-        sprite.position.y =  THREE.Math.randFloatSpread( 1500 );
+        sprite.position.x =  THREE.Math.randFloatSpread( 2000 );
+        sprite.position.y =  THREE.Math.randFloatSpread( 2000 );
         sprite.scale.set(20,20,1);
         sprites.add(sprite);
     }

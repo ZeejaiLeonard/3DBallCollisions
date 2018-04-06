@@ -6,8 +6,8 @@ var balls = [];
 var num_balls = 10;
 var canvas;
 var textures = {};  // all textures loaded from image files
-var starField;      // THREE.Points
-var starSprites;
+// var starField;      // THREE.Points
+var starSprites1,starSprites2;
 var frameCount = 0; // frames processed in the last second
 var fps;             // frames per second text node
 
@@ -87,24 +87,37 @@ function init(){
     scene = new THREE.Scene();
     scene.background = new THREE.Color("rgb(0, 0, 0)");
 
-    // add a starfield of Points
-    starField = createStarField();
-    starField.rotation.x = Math.PI/4;
-    starField.position.x = canvas.width/2;
-    starField.position.y = canvas.height/2;
-    starField.position.z = -1000;
-    // The star points dont look good when passing
-    // in front of the balls (planets) so move them back
-    // behind.
-    scene.add( starField );
+    // // add a starfield of Points
+    // Doesn't work with Safari
+    // starField = createStarField();
+    // starField.rotation.x = Math.PI/4;
+    // starField.position.x = canvas.width/2;
+    // starField.position.y = canvas.height/2;
+    // starField.position.z = -1000;
+    // // The star points dont look good when passing
+    // // in front of the balls (planets) so move them back
+    // // behind.
+    // scene.add( starField );
 
     // add a starfield of Sprites
-    starSprites = createStarSprites();
-    starSprites.rotation.x = Math.PI/4;
-    starSprites.position.x = canvas.width/2;
-    starSprites.position.y = canvas.height/2;
-    // starSprites.position.z = -250;
-    scene.add(starSprites);
+    starSprites1 = createStarSprites(1000);
+    starSprites1.rotation.x = Math.PI/4;
+    starSprites1.position.x = canvas.width/2;
+    starSprites1.position.y = canvas.height/2;
+    starSprites1.position.z = -1000;
+    scene.add(starSprites1);
+
+    // The Points starfield works with Chrome and Firefox
+    // but not Safari.  So add a second starfield of Sprites
+    // that rotates in the opposite direction of the first
+    // and is close to the camera.
+    starSprites2 = createStarSprites(500);
+    starSprites2.rotation.x = Math.PI/4;
+    // starSprites2.position.x = canvas.width/2;
+    // starSprites2.position.y = canvas.height/2;
+    starSprites2.position.z = -500;
+    scene.add(starSprites2 );
+
 
 
     // White directional light at full intensity shining from directly above.
@@ -197,8 +210,8 @@ function animate() {
     checkBallBounces();
     for(let i = 0; i < balls.length; i++)
         balls[i].update(i);
-    starField.rotation.z += 0.0005;  // rotate the starfield a little
-    starSprites.rotation.z -= 0.0005;  // rotate the sprites a little
+    starSprites1.rotation.z += 0.0005;  // rotate the sprites a little
+    starSprites2.rotation.z -= 0.0005;  // rotate the sprites a little
     renderer.render(scene, camera);
 };
 
